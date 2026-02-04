@@ -1,16 +1,27 @@
 package com.processdumper
 
+import android.Manifest
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import com.processdumper.ui.theme.ProcessDumperTheme
 
 class MainActivity : ComponentActivity() {
@@ -32,10 +43,46 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+    val itens = listOf("Item 1", "Item 2", "Item 3")
+    val context = LocalContext.current
+
+    if(!context.checkStoragePermission()) {
+        Toast.makeText(context, "PERMISSÃO DE ARMAZENAMENTO NÃO CONCEDIDA", Toast.LENGTH_SHORT).show()
+    }
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+
+        Text(text= "Processos: ")
+        LazyColumn {
+            items(itens.size) {
+                    item -> Text(text = "Item: $item dd")
+            }
+
+        }
+    }
+
+}
+
+
+fun  Context.checkStoragePermission(): Boolean {
+    var result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    if(result ==  PERMISSION_GRANTED) {
+        return true;
+    }
+
+    result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+    if(result ==  PERMISSION_GRANTED) {
+        return true;
+    }
+
+    result = ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE);
+    if(result ==  PERMISSION_GRANTED) {
+        return true;
+    }
+    return false;
 }
 
 @Preview(showBackground = true)
