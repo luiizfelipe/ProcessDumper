@@ -13,9 +13,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,10 +28,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import com.processdumper.ui.theme.ProcessDumperTheme
+import com.topjohnwu.superuser.Shell
+import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Timber.d("Main Activity Init");
         enableEdgeToEdge()
         setContent {
             ProcessDumperTheme {
@@ -43,9 +51,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-    val itens = listOf("Item 1", "Item 2", "Item 3")
+    var itens by remember {
+        mutableStateOf(listOf("Item 1", "Item 2", "Item 3"))
+    }
     val context = LocalContext.current
-
     if(!context.checkStoragePermission()) {
         Toast.makeText(context, "PERMISSÃO DE ARMAZENAMENTO NÃO CONCEDIDA", Toast.LENGTH_SHORT).show()
     }
@@ -56,12 +65,17 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally) {
 
         Text(text= "Processos: ")
-        LazyColumn {
-            items(itens.size) {
-                    item -> Text(text = "Item: $item dd")
-            }
+        Column {
+            itens.forEach { item -> Text(item) }
 
         }
+
+        Button(
+            onClick = { getListProcess { newList -> itens = newList} }
+        ){
+            Text("Recarregar processos")
+        }
+
     }
 
 }
@@ -83,6 +97,19 @@ fun  Context.checkStoragePermission(): Boolean {
         return true;
     }
     return false;
+}
+
+fun getListProcess(newList: (List<String>) -> Unit){
+    var apps: List<String>;
+    newList(listOf(
+        "Processo A",
+        "Processo B",
+        "Processo C",
+        "Atualizado em ${System.currentTimeMillis()}"
+    ));
+
+
+
 }
 
 @Preview(showBackground = true)
