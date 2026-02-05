@@ -54,6 +54,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     var itens by remember {
         mutableStateOf(listOf("Item 1", "Item 2", "Item 3"))
     }
+    var lastUpdated by remember { mutableStateOf(System.currentTimeMillis()) }
     val context = LocalContext.current
     if(!context.checkStoragePermission()) {
         Toast.makeText(context, "PERMISSÃO DE ARMAZENAMENTO NÃO CONCEDIDA", Toast.LENGTH_SHORT).show()
@@ -69,9 +70,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             itens.forEach { item -> Text(item) }
 
         }
+        Text(text="Atualizado: $lastUpdated")
 
         Button(
-            onClick = { getListProcess { newList -> itens = newList} }
+            onClick = { getListProcess { newList -> itens = newList}; lastUpdated = System.currentTimeMillis()}
         ){
             Text("Recarregar processos")
         }
@@ -101,12 +103,14 @@ fun  Context.checkStoragePermission(): Boolean {
 
 fun getListProcess(newList: (List<String>) -> Unit){
     var apps: List<String>;
-    newList(listOf(
-        "Processo A",
-        "Processo B",
-        "Processo C",
-        "Atualizado em ${System.currentTimeMillis()}"
-    ));
+    val cmd : Shell.Result = Shell.cmd("ps -t").exec();
+    if(!cmd.isSuccess()){
+        newList(cmd.getErr());
+        Log.d("CMD",cmd.toString());
+        return;
+    }
+
+    newList(cmd.getOut());
 
 
 
