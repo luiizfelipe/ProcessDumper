@@ -53,4 +53,14 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    var libsuVersion = "5.0.4";
+    var libsuVersion2 = "4.0.3";
+
+    implementation("com.github.topjohnwu.libsu:core:${libsuVersion}")
+    implementation("com.github.topjohnwu.libsu:service:${libsuVersion}")
+    implementation("com.github.topjohnwu.libsu:nio:${libsuVersion}")
+    implementation("com.github.topjohnwu.libsu:io:${libsuVersion2}")
+    implementation("com.github.topjohnwu.libsu:busybox:${libsuVersion2}")
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
 }
