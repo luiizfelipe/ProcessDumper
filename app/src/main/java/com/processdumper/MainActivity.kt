@@ -27,6 +27,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
+import com.processdumper.model.ProcessInfo
+import com.processdumper.model.ProcessManager
 import com.processdumper.ui.theme.ProcessDumperTheme
 import com.topjohnwu.superuser.Shell
 import timber.log.Timber
@@ -73,7 +75,9 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         Text(text="Atualizado: $lastUpdated")
 
         Button(
-            onClick = { getListProcess { newList -> itens = newList}; lastUpdated = System.currentTimeMillis()}
+            onClick = { getListProcess( newList = { list ->
+                itens = list
+            }, context = context); lastUpdated = System.currentTimeMillis()}
         ){
             Text("Recarregar processos")
         }
@@ -101,19 +105,25 @@ fun  Context.checkStoragePermission(): Boolean {
     return false;
 }
 
-fun getListProcess(newList: (List<String>) -> Unit){
-    var apps: List<String>;
-    val cmd : Shell.Result = Shell.cmd("ps -t").exec();
+fun getListProcess(newList: (List<String>) -> Unit, context: Context){
+    var processManager = ProcessManager();
+    val cmd : Shell.Result = Shell.cmd("ps").exec();
     if(!cmd.isSuccess()){
-        newList(cmd.getErr());
-        Log.d("CMD",cmd.toString());
+        newList(listOf("Error"));
         return;
     }
 
-    newList(cmd.getOut());
+    val resultPs : List<String> = cmd.getOut();
 
-
-
+    for ((index, process) in resultPs.withIndex()) {
+        if(index == 0) continue;
+        val processInfos: List<String> = process.split(" ");
+        val packageName: String = processInfos.get(processInfos.size - 1);
+        var pid : Int? = processInfos.get(1).toIntOrNull();
+        processManager.add(ProcessInfo(context, packageName, pid))
+    }
+    
+    newList(processManager.getAllFormated());
 }
 
 @Preview(showBackground = true)
