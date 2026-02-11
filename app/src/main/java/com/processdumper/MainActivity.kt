@@ -39,7 +39,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import com.processdumper.model.ProcessInfo
-import com.processdumper.model.ProcessManager
+import com.processdumper.repository.ProcessRepository
 import com.processdumper.ui.theme.ProcessDumperTheme
 import com.topjohnwu.superuser.Shell
 import timber.log.Timber
@@ -128,6 +128,9 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         Button(onClick = { showModal = true }) {
             Text("Selecionar processo")
         }
+        Button(onClick = { showModal = true }) {
+            Text("Dump")
+        }
 
     }
 
@@ -153,7 +156,7 @@ fun  Context.checkStoragePermission(): Boolean {
 }
 
 fun getListProcess(newList: (List<String>) -> Unit, context: Context){
-    var processManager = ProcessManager();
+    var processRepository = ProcessRepository();
     val cmd : Shell.Result = Shell.cmd("ps").exec();
     if(!cmd.isSuccess()){
         newList(listOf("Error"));
@@ -166,11 +169,11 @@ fun getListProcess(newList: (List<String>) -> Unit, context: Context){
         if(index == 0) continue;
         val processInfos: List<String> = process.split(" ");
         val packageName: String = processInfos.get(processInfos.size - 1);
-        var pid : Int? = processInfos.get(1).toIntOrNull();
-        processManager.add(ProcessInfo(context, packageName, pid))
+        var pid : Int = processInfos.get(1).toIntOrNull() ?: -1;
+        processRepository.add(context, packageName, pid)
     }
 
-    newList(processManager.getAllFormated());
+    newList(processRepository.getAllFormated());
 }
 
 @Preview(showBackground = true)

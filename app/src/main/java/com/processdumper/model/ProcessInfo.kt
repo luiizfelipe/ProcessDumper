@@ -8,9 +8,12 @@ class ProcessInfo(){
 
     var AppName: String = ""
     var PackageName: String = ""
-    var Pid: Int? = -1
 
-    constructor(context: Context, packageName: String, pid: Int?) : this(){
+    var Pids: MutableList<Int> = mutableListOf()
+
+
+
+    constructor(context: Context, packageName: String, pids: MutableList<Int>) : this(){
         var applicationInfo : ApplicationInfo? = null;
         try {
 
@@ -23,7 +26,7 @@ class ProcessInfo(){
         {
             PackageName = packageName;
 
-            Pid = pid;
+            Pids = pids;
 
             if(applicationInfo != null){
                 AppName = context.getPackageManager().getApplicationLabel(applicationInfo).toString();
