@@ -5,6 +5,7 @@ import android.util.Log;
 import com.processdumper.model.MapInfo;
 import com.processdumper.model.MemoryInfo;
 import com.processdumper.model.ProcessInfo;
+import com.processdumper.utils.LogManager;
 import com.topjohnwu.superuser.Shell;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class MemoryManagement {
         List<MapInfo> listMaps = new ArrayList<>();
 
         int PID = -1;
-        for (int pid : process.getPids()) {
+        for (Integer pid : process.pids) {
 
             StringBuilder mapsString = new StringBuilder();
 
@@ -42,7 +43,6 @@ public class MemoryManagement {
                 if (!lines.contains("USER") && !lines.contains("PID") && !lines.contains("PPID") && !lines.contains("NAME")) {
 
                     if(lines.toString().contains(fileName)){
-                        Timber.d("[+] MAP FILES [+] %s", lines);
                         listMapsData.put("Maps-" + pid + ".txt",lines + "\n");
                         createListMaps.add(new MapInfo(pid, lines));
                     }
