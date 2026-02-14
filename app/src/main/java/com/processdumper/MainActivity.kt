@@ -21,9 +21,14 @@ import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Timber.d("Main Activity Init");
+        super.onCreate(savedInstanceState);
         enableEdgeToEdge()
+
+        val builder = Shell.Builder.create()
+            .setFlags(Shell.FLAG_MOUNT_MASTER)
+
+        Shell.setDefaultBuilder(builder)
+
         setContent {
             ProcessDumperTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
