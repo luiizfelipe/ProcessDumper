@@ -1,9 +1,11 @@
 package com.processdumper.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,16 +16,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProcessListModal(
+fun ListModal(
     showModal: Boolean,
     onDismiss: () -> Unit,
     clickableLine: (line: String) -> Unit,
-    itens: List<String>
+    items: List<String>
 ) {
     if (showModal) {
         Dialog(onDismissRequest = onDismiss) {
@@ -37,12 +40,17 @@ fun ProcessListModal(
                     .padding(16.dp)
             ) {
                 LazyColumn {
-                    items(itens) { item ->
+                    items(items) { item ->
                         Text(
-                            text = item,
-                            modifier = Modifier
+                            item, Modifier
                                 .fillMaxWidth()
-                                .padding(12.dp)
+                                .height(50.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = Color.Black,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .padding(top = 10.dp)
                                 .clickable {
                                     clickableLine(item)
 
