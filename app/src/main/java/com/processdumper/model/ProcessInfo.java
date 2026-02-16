@@ -18,7 +18,7 @@ public class ProcessInfo {
             applicationInfo = context.getPackageManager().getApplicationInfo(packageName,0);
 
         } catch (Exception e) {
-            LogManager.log("Not found application info");
+
         }
         finally {
             this.packageName = packageName;
