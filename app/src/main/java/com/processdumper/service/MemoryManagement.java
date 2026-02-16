@@ -1,9 +1,7 @@
 package com.processdumper.service;
 
-import android.util.Log;
-
-import com.processdumper.model.MapInfo;
-import com.processdumper.model.MemoryInfo;
+import com.processdumper.model.mapinfo.InvalidMapFormatException;
+import com.processdumper.model.mapinfo.MapInfo;
 import com.processdumper.model.ProcessInfo;
 import com.processdumper.utils.LogManager;
 import com.topjohnwu.superuser.Shell;
@@ -15,11 +13,15 @@ import java.util.List;
 import timber.log.Timber;
 
 public class MemoryManagement {
-    private HashMap<String, String> listMapsData;
+    private HashMap<String, List<MapInfo>> listMapsData = new HashMap<>();
 
-    private List<MapInfo> getAllMaps(ProcessInfo process, String fileName) {
+    public HashMap<String, List<MapInfo>> getListMapsData() {
+        return listMapsData;
+    }
 
-        List<MapInfo> listMaps = new ArrayList<>();
+    public List<MapInfo> getAllMaps(ProcessInfo process, String fileName) {
+
+        List<MapInfo> createListMaps = new ArrayList<>();
 
         int PID = -1;
         for (Integer pid : process.pids) {
@@ -29,31 +31,36 @@ public class MemoryManagement {
             Shell.Result cmd = Shell.cmd("cat /proc/" + pid + "/maps").exec();
 
             if (!cmd.isSuccess()) {
-                return listMaps;
+                return createListMaps;
             }
 
-            List<MapInfo> createListMaps = new ArrayList<>();
 
             List<String> output = cmd.getOut();
 
             for (int i = 0; i < (output.size()); i++) {
+                try {
+                    String lines = output.get(i).replaceAll("\\s+", " ");
 
-                String lines = output.get(i).replaceAll("\\s+", " ");
+                    if (!lines.contains("USER") && !lines.contains("PID") && !lines.contains("PPID") && !lines.contains("NAME")) {
 
-                if (!lines.contains("USER") && !lines.contains("PID") && !lines.contains("PPID") && !lines.contains("NAME")) {
-
-                    if(lines.toString().contains(fileName)){
-                        listMapsData.put("Maps-" + pid + ".txt",lines + "\n");
-                        createListMaps.add(new MapInfo(pid, lines));
+                        if(lines.toString().contains(fileName)){
+                            createListMaps.add(new MapInfo(pid, lines));
+                        }
                     }
                 }
+                catch (InvalidMapFormatException e) {
+                    Timber.tag("MapParser").w("Linha ignorada: %s", output.get(i));
+                }
+
+
             }
+            listMapsData.put(pid.toString(), createListMaps);
 
             if (PID == -1) {
                 PID = pid;
             }
 
         }
-        return listMaps;
+        return createListMaps;
     }
 }
