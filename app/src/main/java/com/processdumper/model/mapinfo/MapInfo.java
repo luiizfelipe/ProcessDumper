@@ -1,8 +1,8 @@
-package com.processdumper.model;
-
-import android.util.Log;
+package com.processdumper.model.mapinfo;
 
 import java.util.Arrays;
+
+import timber.log.Timber;
 
 public class MapInfo {
     private final int PID;
@@ -19,7 +19,7 @@ public class MapInfo {
         mapData = mapData.replaceAll("\\s+", " ");
         String[] dataString = mapData.split(" ");
         if(dataString.length < 6) {
-            throw new IllegalArgumentException("Erro no mapeamento: formato inválido");
+            throw new InvalidMapFormatException(mapData);
 
         }
         address = dataString[0];
@@ -53,6 +53,29 @@ public class MapInfo {
            fileName = "";
         }
     }
+
+    public int getPID() {
+        return PID;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getFileName(){
+        return fileName;
+    }
+
+    public long getStartAddress() {
+        if (address.isEmpty()) return 0L;
+        return Long.parseLong(address.split("-")[0], 16);
+    }
+
+    public long getEndAddress() {
+        if (address.isEmpty()) return 0L;
+        return Long.parseLong(address.split("-")[1], 16);
+    }
+
     private String getFullStringStartingFromSplit(String input, String find, int startIndex) {
 
         if(input.contains(find))
