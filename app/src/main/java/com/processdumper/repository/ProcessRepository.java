@@ -25,7 +25,9 @@ public class ProcessRepository {
         List<String> processFormatted = new ArrayList<>();
 
         for (ProcessInfo process : this.processes.values()) {
-            processFormatted.add(process.packageName);
+            if(process.appName != "App Name not found"){
+                processFormatted.add(process.packageName);
+            }
         }
 
         return processFormatted;
