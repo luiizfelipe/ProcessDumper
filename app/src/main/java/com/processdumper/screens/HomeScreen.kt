@@ -32,8 +32,16 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier) {
     var lastUpdated by remember { mutableStateOf(System.currentTimeMillis()) }
     val context = LocalContext.current
 
+    fun refreshProcessList() {
+        lastUpdated = System.currentTimeMillis()
+    }
 
-    val onClickSelected : () -> Unit = {
+    fun openModal() {
+        showModal = true
+    }
+
+    fun openProcessSelector() {
+        refreshProcessList();
         getListProcess(
             newList = { _processRepository ->
                 if (_processRepository != null) {
@@ -42,8 +50,11 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier) {
                 }
             }, context = context
         );
-        lastUpdated = System.currentTimeMillis();
-        showModal = true;
+        openModal();
+    }
+
+    val onClickSelected : () -> Unit = {
+        openProcessSelector();
     }
 
     val onClickDump : () -> Unit = {
@@ -64,7 +75,7 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier) {
         }
     }
 
-    
+
     ListModal(showModal, onDismiss = { showModal = false }, clickableLine = { line ->
         selectedProcess = processRepository.getProcessInfo(line);
         showModal = false;
