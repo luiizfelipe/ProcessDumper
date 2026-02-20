@@ -5,6 +5,7 @@ import java.util.Arrays;
 import timber.log.Timber;
 
 public class MapInfo {
+    public String Id;
     private final int PID;
     private String address = "";
     private String perms = "";
@@ -20,7 +21,6 @@ public class MapInfo {
         String[] dataString = mapData.split(" ");
         if(dataString.length < 6) {
             throw new InvalidMapFormatException(mapData);
-
         }
         address = dataString[0];
         perms = dataString[1];
@@ -52,6 +52,7 @@ public class MapInfo {
         } else {
            fileName = "";
         }
+        Id = PID + address;
     }
 
     public int getPID() {
