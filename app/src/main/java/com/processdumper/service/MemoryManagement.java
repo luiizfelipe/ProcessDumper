@@ -63,4 +63,13 @@ public class MemoryManagement {
         }
         return createListMaps;
     }
+
+    public MapInfo getMapInfo(String appName, String pid){
+        for ( MapInfo map : listMapsData.get(pid)) {
+            if(appName == map.getFileName()){
+                return map;
+            }
+        }
+        return null;
+    }
 }
