@@ -79,7 +79,7 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier) {
     val onClickDump : () -> Unit = {
         if(fileName == selectedFilename?.name){
             var dumper = Dumper(selectedProcess, fileName)
-            var action: DumpAction = dumper.init();
+            var action = dumper.start(selectedFilename);
         }
         var dumper = Dumper(selectedProcess, fileName)
         var action: DumpAction = dumper.init();

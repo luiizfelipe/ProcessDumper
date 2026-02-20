@@ -77,6 +77,14 @@ public class MapInfo {
         return Long.parseLong(address.split("-")[1], 16);
     }
 
+    public String getPerms() {
+        return perms;
+    }
+
+    public String getOffset() {
+        return offset;
+    }
+
     private String getFullStringStartingFromSplit(String input, String find, int startIndex) {
 
         if(input.contains(find))
