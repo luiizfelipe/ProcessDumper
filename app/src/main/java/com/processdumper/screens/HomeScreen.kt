@@ -65,12 +65,23 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier) {
         openModal();
     }
 
+    fun openFileSelector() {
+        typeList = TypeList.LIST_FILES;
+        refreshProcessList();
+        openModal();
+    }
+
     val onClickSelected : () -> Unit = {
+        typeList = TypeList.LIST_PROCESS;
         openProcessSelector();
     }
 
     val onClickDump : () -> Unit = {
-        var dumper = Dumper(selectedProcess)
+        if(fileName == selectedFilename?.name){
+            var dumper = Dumper(selectedProcess, fileName)
+            var action: DumpAction = dumper.init();
+        }
+        var dumper = Dumper(selectedProcess, fileName)
         var action: DumpAction = dumper.init();
         if(action == DumpAction.ASK_USER_FILE){
             showModal = true;
@@ -120,6 +131,13 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier) {
             Text("Selecionar processo")
         }
 
+        TextField(
+            value = fileName,
+            onValueChange = { fileName = it },
+            placeholder = { Text("Enter file name") },
+            singleLine = true
+        )
+
         if (selectedProcess != null) {
             Button(onClick = onClickDump) {
                 Text("Dump")
@@ -131,6 +149,9 @@ fun HomeScreen(name: String, modifier: Modifier = Modifier) {
         Text(text = "Atualizado: $lastUpdated")
         if (selectedProcess != null) {
             Text(text = "Processo selecionado: ${selectedProcess?.packageName}")
+        }
+        if (fileName != null) {
+            Text(text = "Arquivo selecionado: ${fileName}")
         }
     }
 
