@@ -15,18 +15,18 @@ import java.util.List;
 
 public class Dumper {
 
-    MemoryManagement memoryManagement;
-    ProcessInfo process;
+    public MemoryManagement memoryManagement;
+    public ProcessInfo process;
     String fileName = "";
 
-
-    public Dumper(ProcessInfo process){
+    public Dumper(ProcessInfo process, String fileName){
         this.process = process;
+        this.fileName = fileName;
         this.memoryManagement = new MemoryManagement();
     }
 
     public DumpAction init(){
-        List<String> filesName = this.getFileNames();
+        List<MapInfo> filesName = this.memoryManagement.getAllMaps(process, fileName);
         int amountFiles = filesName.size();
         if(amountFiles == 0){
             return DumpAction.NOT_FOUND_FILE;
@@ -37,16 +37,11 @@ public class Dumper {
         return DumpAction.ASK_USER_FILE;
     }
 
-    private List<String> getFileNames(){
-        List<MapInfo> maps = this.memoryManagement.getAllMaps(process, fileName);
-        List<String> filesName = new ArrayList<>();
-        for (MapInfo map : maps) {
-            String fileName = map.getFileName();
-            if(fileName.isEmpty()) continue;
-            filesName.add(fileName);
-            LogManager.log(fileName);
-        }
-        return filesName;
+    public void start(){
+        if(fileName.isEmpty()) return;
+
+        Shell.Result cmd = Shell.cmd("dd if=/system/lib/libjavacrypto.so of=/data/local/tmp/output bs=1 skip=${}").exec();
+
     }
 
     private void dumpFile(){
