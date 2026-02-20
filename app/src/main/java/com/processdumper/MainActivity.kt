@@ -80,7 +80,7 @@ fun getListProcess(newList: (processRepository: ProcessRepository?) -> Unit, con
         processRepository.add(context, packageName, pid)
     }
     for (process in processRepository.getAllFormated()){
-        LogManager.log(process);
+        LogManager.log(process.name);
     }
     newList(processRepository);
 }

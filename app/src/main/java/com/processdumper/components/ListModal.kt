@@ -20,13 +20,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
+data class MapItem(
+    val id: String,
+    val name: String
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListModal(
     showModal: Boolean,
     onDismiss: () -> Unit,
-    clickableLine: (line: String) -> Unit,
-    items: List<String>
+    clickableLine: (line: String, id: String) -> Unit,
+    items: List<MapItem>
 ) {
     if (showModal) {
         Dialog(onDismissRequest = onDismiss) {
@@ -42,7 +47,7 @@ fun ListModal(
                 LazyColumn {
                     items(items) { item ->
                         Text(
-                            item, Modifier
+                            item.name, Modifier
                                 .fillMaxWidth()
                                 .height(50.dp)
                                 .border(
@@ -52,7 +57,7 @@ fun ListModal(
                                 )
                                 .padding(top = 10.dp)
                                 .clickable {
-                                    clickableLine(item)
+                                    clickableLine(item.name, item.id)
 
                                 }
                         )

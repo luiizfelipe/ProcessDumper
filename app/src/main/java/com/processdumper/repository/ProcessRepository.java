@@ -3,7 +3,9 @@ package com.processdumper.repository;
 import android.content.Context;
 import android.util.Log;
 
+import com.processdumper.components.MapItem;
 import com.processdumper.model.ProcessInfo;
+import com.processdumper.model.mapinfo.MapInfo;
 import com.processdumper.utils.LogManager;
 
 import java.util.ArrayList;
@@ -21,12 +23,12 @@ public class ProcessRepository {
         return processes.get(packageName);
     }
 
-    public List<String> getAllFormated(){
-        List<String> processFormatted = new ArrayList<>();
+    public List<MapItem> getAllFormated(){
+        List<MapItem> processFormatted = new ArrayList<>();
 
         for (ProcessInfo process : this.processes.values()) {
             if(process.appName != "App Name not found"){
-                processFormatted.add(process.packageName);
+                processFormatted.add(new MapItem("", process.packageName));
             }
         }
 
